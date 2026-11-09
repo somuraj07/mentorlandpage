@@ -13,13 +13,13 @@ const serif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "SAATHYAKI — Counselling and problem solving with mentors",
+  title: "SAATHYAKI — Consoling and problem solving with mentors",
   description:
-    "SAATHYAKI is one-on-one counselling and problem solving with real mentors. Talk through your career, studies, money, startup or personal problems on video call or chat, and pay only for the minutes you use. Launching soon.",
+    "SAATHYAKI is one-on-one consoling and problem solving with real mentors. Talk through your career, studies, money, startup or personal problems on video call or chat, and pay only for the minutes you use. Launching soon.",
   openGraph: {
-    title: "SAATHYAKI — Counselling and problem solving, by the minute",
+    title: "SAATHYAKI — Consoling and problem solving, by the minute",
     description:
-      "Video call or chat with a mentor about any problem. Get counselling and practical solutions, and pay only for the minutes you use. Join the waitlist.",
+      "Video call or chat with a mentor about any problem. Get a consoling ear and practical solutions, and pay only for the minutes you use. Join the waitlist.",
     type: "website",
   },
 };

@@ -76,7 +76,7 @@ export function Hero() {
           <motion.div {...enter(0.05)}>
             <p className="flex items-center gap-2 text-sm text-white/60">
               <span className="h-1.5 w-1.5 rounded-full bg-lime" />
-              Counselling and problem solving, opening 26 January 2027
+              Consoling and problem solving, opening 26 January 2027
             </p>
           </motion.div>
 
@@ -96,7 +96,7 @@ export function Hero() {
           </h1>
 
           <motion.p {...enter(0.55)} className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/70 sm:text-lg">
-            SAATHYAKI is one-on-one counselling and problem solving for whatever&apos;s on your mind. Talk it
+            SAATHYAKI is one-on-one consoling and problem solving for whatever&apos;s on your mind. Talk it
             through on video or chat with a mentor who&apos;s been there, and pay only for the minutes you talk.
           </motion.p>
 
