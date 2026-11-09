@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import {
   Briefcase, GraduationCap, HeartHandshake, IndianRupee, Rocket, Code2, Brain, Plane,
   Plus, Video, MessageCircle, ArrowUpRight, ArrowRight, Clock, Coins, CalendarCheck,
@@ -9,7 +9,7 @@ import {
 import { useRef, useState } from "react";
 import { CURRENCY, EXAMPLE_RATES } from "@/lib/site";
 import { WaitlistForm } from "./WaitlistForm";
-import { AnimatedNumber, Countdown, EASE_OUT, FadeUp, Logo, RevealText, Tag } from "./ui";
+import { AnimatedNumber, Countdown, EASE_OUT, FadeUp, Logo, Magnetic, RevealText, Stagger, StaggerItem, Tag } from "./ui";
 
 const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
 
@@ -27,15 +27,15 @@ export function Pricing() {
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <Tag n="04">Pay by duration</Tag>
-          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-            Only pay for the minutes you talk.
+          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+            Only pay for the minutes you talk
           </RevealText>
           <FadeUp delay={0.15}>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-muted">
               Every mentor shows a per-minute rate before you start. A quick 10-minute doubt costs a
               10-minute fee. A deep 60-minute session costs exactly that.
             </p>
-            <ul className="mt-8 flex flex-col gap-3 text-[15px]">
+            <Stagger as="ul" className="mt-8 flex flex-col gap-3 text-[15px]">
               {(
                 [
                   [Clock, "Billed by the minute, never by the hour"],
@@ -43,22 +43,22 @@ export function Pricing() {
                   [CalendarCheck, "End the session whenever you're done"],
                 ] as const
               ).map(([Icon, t]) => (
-                <li key={t} className="flex items-center gap-3">
+                <StaggerItem as="li" key={t} className="flex items-center gap-3">
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-lavender-soft text-violet">
                     <Icon className="h-4 w-4" />
                   </span>
                   {t}
-                </li>
+                </StaggerItem>
               ))}
-            </ul>
+            </Stagger>
           </FadeUp>
         </div>
 
         <FadeUp delay={0.1}>
-          <div className="relative overflow-hidden rounded-[36px] bg-card p-6 shadow-[0_40px_100px_-50px_rgba(62,42,158,0.55)] ring-1 ring-line sm:p-10">
+          <div className="relative overflow-hidden rounded-3xl bg-card p-6 shadow-[0_40px_100px_-50px_rgba(62,42,158,0.55)] ring-1 ring-line sm:p-10">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <h3 className="text-lg font-bold">Estimate a session</h3>
-              <div role="radiogroup" aria-label="Session type" className="inline-flex rounded-full bg-paper p-1 text-sm">
+              <h3 className="text-lg font-medium">Estimate a session</h3>
+              <div role="radiogroup" aria-label="Session type" className="inline-flex rounded-xl bg-paper p-1 text-sm">
                 {(
                   [
                     ["video", "Video", Video],
@@ -70,10 +70,10 @@ export function Pricing() {
                     role="radio"
                     aria-checked={mode === v}
                     onClick={() => setMode(v)}
-                    className={`relative flex min-h-[40px] items-center gap-1.5 rounded-full px-4 transition-colors ${mode === v ? "text-white" : "text-muted"}`}
+                    className={`relative flex min-h-[40px] items-center gap-1.5 rounded-lg px-4 transition-colors ${mode === v ? "text-white" : "text-muted"}`}
                   >
                     {mode === v && (
-                      <motion.span layoutId="mode-pill" className="absolute inset-0 rounded-full bg-violet" transition={{ type: "spring", duration: 0.4, bounce: 0.15 }} />
+                      <motion.span layoutId="mode-pill" className="absolute inset-0 rounded-lg bg-violet" transition={{ type: "spring", duration: 0.4, bounce: 0 }} />
                     )}
                     <Icon className="relative h-3.5 w-3.5" />
                     <span className="relative">{label}</span>
@@ -85,7 +85,7 @@ export function Pricing() {
             <div className="mt-10 flex items-end justify-between gap-4">
               <div>
                 <p className="label">Estimated cost</p>
-                <p className="mt-2 font-display text-[clamp(3.4rem,10vw,6rem)] font-bold leading-none tracking-[-0.05em] tabular-nums">
+                <p className="mt-2 font-display text-[clamp(3.4rem,10vw,6rem)] font-medium leading-none tracking-[-0.03em] tabular-nums">
                   {CURRENCY}
                   <AnimatedNumber value={total} />
                 </p>
@@ -159,8 +159,8 @@ export function Categories() {
         <div className="flex items-end justify-between gap-6">
           <div className="max-w-3xl">
             <Tag n="05">Every kind of problem</Tag>
-            <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-              On your mind? There&apos;s a mentor for it.
+            <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+              On your mind? There&apos;s a mentor for it
             </RevealText>
           </div>
           <span className="label hidden items-center gap-2 max-sm:inline-flex">
@@ -176,16 +176,18 @@ export function Categories() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-8% 0px" }}
             transition={{ duration: 0.6, ease: EASE_OUT, delay: (i % 4) * 0.06 }}
-            className={`group relative flex min-h-[300px] min-w-[76%] snap-start flex-col justify-between overflow-hidden rounded-[32px] p-6 transition-transform duration-300 hover:-translate-y-1 sm:min-h-[280px] sm:min-w-0 ${c.c}`}
+            whileHover={{ y: -8, rotate: i % 2 ? 1 : -1, transition: { type: "spring", stiffness: 400, damping: 26 } }}
+            whileTap={{ scale: 0.98 }}
+            className={`group relative flex min-h-[300px] min-w-[76%] snap-start flex-col justify-between overflow-hidden rounded-3xl p-6 sm:min-h-[280px] sm:min-w-0 ${c.c}`}
           >
             <div className="flex items-start justify-between">
               <span className="font-mono text-xs opacity-60">0{i + 1}</span>
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-current/10 transition-transform duration-500 group-hover:rotate-[-12deg] group-hover:scale-110">
+              <span className="grid h-12 w-12 place-items-center rounded-full bg-current/10">
                 <c.icon className="h-5 w-5" />
               </span>
             </div>
             <div>
-              <h3 className="text-[1.7rem] font-bold leading-[1.05] tracking-[-0.03em]">{c.t}</h3>
+              <h3 className="text-[1.7rem] font-medium leading-[1.05] tracking-[-0.03em]">{c.t}</h3>
               <p className={`mt-2 text-sm ${c.s}`}>{c.d}</p>
             </div>
           </motion.div>
@@ -201,7 +203,7 @@ function SpinBadge() {
   const text = "BECOME A SAATHI • EARN BY THE MINUTE • ";
   return (
     <div className="relative h-36 w-36 sm:h-44 sm:w-44">
-      <svg viewBox="0 0 200 200" className="spin-slow h-full w-full" aria-hidden>
+      <svg viewBox="0 0 200 200" className="h-full w-full" aria-hidden>
         <defs>
           <path id="circ" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
         </defs>
@@ -219,7 +221,7 @@ function SpinBadge() {
 export function Mentors() {
   return (
     <section id="mentors" className="mx-auto max-w-[1400px] px-4 py-20 sm:px-8 sm:py-28">
-      <div data-dark className="relative overflow-hidden rounded-[40px] bg-violet px-6 py-12 text-white sm:px-14 sm:py-20">
+      <div data-dark className="relative overflow-hidden rounded-3xl bg-violet px-6 py-12 text-white sm:px-14 sm:py-20">
         <div className="pointer-events-none absolute -bottom-40 -right-20 h-[520px] w-[520px] rounded-full border-[60px] border-white/[0.06]" />
         <div className="pointer-events-none absolute -bottom-10 right-40 h-[300px] w-[300px] rounded-full border-[40px] border-lime/10" />
         <div className="relative grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-end">
@@ -232,11 +234,11 @@ export function Mentors() {
                 <SpinBadge />
               </a>
             </div>
-            <RevealText className="mt-6 text-[clamp(2.6rem,6.4vw,5.6rem)] font-bold leading-[0.92] tracking-[-0.05em]">
+            <RevealText className="mt-6 text-[clamp(2.6rem,6.4vw,5.6rem)] font-medium leading-[0.92] tracking-[-0.03em]">
               Know something worth sharing?
             </RevealText>
             <FadeUp delay={0.15}>
-              <p className="serif-accent mt-3 text-[clamp(2rem,4.6vw,3.6rem)] leading-none text-lime">Become a Saathi.</p>
+              <p className="serif-accent mt-3 text-[clamp(2rem,4.6vw,3.6rem)] leading-none text-lime">Become a Saathi</p>
               <p className="mt-6 max-w-lg text-lg text-white/75">
                 Turn what you&apos;ve learned into income. Set your own per-minute rate, open the hours that
                 suit you, and get paid for every minute you help.
@@ -249,25 +251,22 @@ export function Mentors() {
                 <SpinBadge />
               </a>
             </div>
-            <ul className="flex flex-col gap-2.5">
+            <Stagger as="ul" className="flex flex-col gap-2.5">
               {["Set your own rate", "Choose your hours", "Paid for every minute"].map((t, i) => (
-                <motion.li
-                  key={t}
-                  whileHover={{ x: 6 }}
-                  transition={{ type: "spring", duration: 0.3, bounce: 0.2 }}
-                  className="flex items-center justify-between rounded-2xl bg-white/10 px-5 py-4 backdrop-blur"
-                >
+                <StaggerItem as="li" key={t} className="flex items-center justify-between rounded-xl bg-white/10 px-5 py-4">
                   <span className="flex items-center gap-3">
                     <span className="font-mono text-xs text-white/50">0{i + 1}</span>
                     {t}
                   </span>
                   <ArrowUpRight className="h-4 w-4 text-lime" />
-                </motion.li>
+                </StaggerItem>
               ))}
-              <a href="#join" className="btn btn-lime mt-3 px-6 py-3.5 text-base">
-                Apply as a mentor <ArrowRight className="h-4 w-4" />
-              </a>
-            </ul>
+              <Magnetic className="mt-3 flex w-full">
+                <a href="#join" className="btn btn-lime w-full px-6 py-3.5 text-base">
+                  Apply as a mentor <ArrowRight className="h-4 w-4" />
+                </a>
+              </Magnetic>
+            </Stagger>
           </FadeUp>
         </div>
       </div>
@@ -293,15 +292,15 @@ export function FAQ() {
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <Tag n="07">FAQ</Tag>
-          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-            Questions, answered.
+          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+            Questions, answered
           </RevealText>
         </div>
-        <div className="flex flex-col">
+        <Stagger className="flex flex-col">
           {FAQS.map(([q, a], i) => {
             const isOpen = open === i;
             return (
-              <div key={q} className="border-b border-line">
+              <StaggerItem key={q} className="border-b border-line">
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
@@ -332,10 +331,10 @@ export function FAQ() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   );
@@ -359,12 +358,12 @@ export function FinalCTA() {
         <Tag n="08" dark>
           Early access
         </Tag>
-        <h2 className="mt-6 max-w-4xl text-[clamp(3rem,9vw,8.5rem)] font-bold leading-[0.88] tracking-[-0.055em]">
+        <h2 className="mt-6 max-w-4xl text-[clamp(3rem,9vw,8.5rem)] font-medium leading-[0.88] tracking-[-0.03em]">
           <RevealText as="span" className="block">
             Your saathi is
           </RevealText>
           <RevealText as="span" delay={0.15} className="serif-accent block text-lavender">
-            almost here.
+            almost here
           </RevealText>
         </h2>
         <FadeUp delay={0.2}>
@@ -386,11 +385,8 @@ export function FinalCTA() {
 }
 
 export function Footer() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["35%", "0%"]);
   return (
-    <footer ref={ref} data-dark className="overflow-hidden bg-night text-white">
+    <footer data-dark className="overflow-hidden bg-night text-white">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8 border-t border-white/10 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <Logo light />
         <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-white/60">
@@ -407,13 +403,12 @@ export function Footer() {
         </nav>
         <p className="text-sm text-white/40">© 2026 SAATHYAKI</p>
       </div>
-      <motion.p
-        style={{ y }}
+      <p
         aria-hidden
-        className="select-none pb-4 text-center font-display text-[20vw] font-bold leading-[0.8] tracking-[-0.06em] text-lavender/[0.16]"
+        className="select-none pb-4 text-center font-display text-[20vw] font-medium leading-[0.8] tracking-[-0.03em] text-lavender/[0.16]"
       >
         SAATHYAKI
-      </motion.p>
+      </p>
     </footer>
   );
 }

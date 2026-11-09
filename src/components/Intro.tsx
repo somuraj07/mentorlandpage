@@ -65,12 +65,12 @@ export function Intro() {
             <motion.div
               initial={{ scale: 0.6, opacity: 0, rotate: -40 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ type: "spring", duration: 0.9, bounce: 0.3 }}
+              transition={{ type: "spring", duration: 0.9, bounce: 0 }}
               className="rounded-full bg-white/5 p-3 ring-1 ring-white/10"
             >
               <LogoMark className="h-10 w-14" light />
             </motion.div>
-            <div className="flex overflow-hidden font-display text-4xl font-bold tracking-[0.12em] sm:text-7xl">
+            <div className="flex overflow-hidden font-display text-4xl font-medium tracking-[0.12em] sm:text-7xl">
               {NAME.map((c, i) => (
                 <motion.span
                   key={i}

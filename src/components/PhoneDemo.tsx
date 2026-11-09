@@ -28,13 +28,13 @@ function AskScene() {
   const done = n >= PROBLEM.length;
   return (
     <div className="flex h-full flex-col px-4 pt-3 text-ink">
-      <p className="text-[11px] text-muted">Hi Rahul 👋</p>
-      <h4 className="mt-1 font-display text-[22px] font-bold leading-[1.1] tracking-tight">What&apos;s on your mind today?</h4>
+      <p className="text-[11px] text-muted">New session</p>
+      <h4 className="mt-1 font-display text-[22px] font-medium leading-[1.1] tracking-tight">What&apos;s on your mind today?</h4>
       <div className="mt-4 min-h-[92px] rounded-2xl border border-line bg-white p-3 text-[13px] leading-snug text-ink shadow-sm">
         {PROBLEM.slice(0, n)}
         {!done && <span className="ml-px inline-block h-3.5 w-px animate-pulse bg-ink align-middle" />}
       </div>
-      <p className="mt-4 text-[10px] font-medium uppercase tracking-wider text-faint">Topics</p>
+      <p className="mt-4 text-[11px] text-muted">Topics</p>
       <div className="mt-2 flex flex-wrap gap-1.5">
         {[
           [Briefcase, "Career"],
@@ -82,7 +82,7 @@ function MatchScene() {
   return (
     <div className="flex h-full flex-col px-4 pt-3 text-ink">
       <p className="text-[11px] text-muted">3 mentors have solved this</p>
-      <h4 className="mt-1 font-display text-[22px] font-bold leading-[1.1] tracking-tight">Matched for you</h4>
+      <h4 className="mt-1 font-display text-[22px] font-medium leading-[1.1] tracking-tight">Matched for you</h4>
       <div className="mt-4 flex flex-col gap-2">
         {MENTORS.map((m, i) => (
           <motion.div
@@ -94,7 +94,7 @@ function MatchScene() {
               sel === i ? "border-violet ring-2 ring-violet/20" : "border-line"
             }`}
           >
-            <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br ${m.c} text-[11px] font-bold text-ink`}>
+            <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br ${m.c} text-[11px] font-medium text-ink`}>
               {m.i}
             </span>
             <div className="min-w-0 flex-1">
@@ -107,7 +107,7 @@ function MatchScene() {
               </p>
             </div>
             <div className="text-right">
-              <p className="font-display text-[13px] font-bold">
+              <p className="font-display text-[13px] font-medium">
                 {CURRENCY}
                 {m.rate}
               </p>
@@ -160,8 +160,7 @@ function CallScene() {
       </div>
       <div className="relative mt-10 flex flex-col items-center">
         <div className="relative grid h-28 w-28 place-items-center">
-          <span className="pulse-ring absolute inset-0 rounded-full bg-lavender/40" />
-          <span className="relative grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] font-display text-3xl font-bold">
+          <span className="relative grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] font-display text-3xl font-medium">
             AR
           </span>
         </div>
@@ -187,7 +186,7 @@ function CallScene() {
         “Let&apos;s map your QA wins to PM skills first…”
       </motion.div>
       <div className="absolute right-3 top-12 grid h-20 w-14 place-items-center rounded-xl border border-white/15 bg-gradient-to-b from-[#2c3a10] to-[#151d07]">
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-lime text-[9px] font-bold text-ink">You</span>
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-lime text-[9px] font-medium text-ink">You</span>
       </div>
       <div className="absolute inset-x-0 bottom-5 flex justify-center gap-3">
         {[Mic, Video, MessageSquare].map((Icon, i) => (
@@ -204,10 +203,10 @@ function CallScene() {
 }
 
 const MSGS = [
-  { me: true, t: "Here's my resume 📄" },
+  { me: true, t: "Here's my resume" },
   { me: false, t: "Rewrite these 3 bullets as product outcomes." },
   { me: false, t: "Then message me — I'll review tonight." },
-  { me: true, t: "On it. Thank you! 🙏" },
+  { me: true, t: "On it, thank you" },
 ];
 
 function ChatScene() {
@@ -219,7 +218,7 @@ function ChatScene() {
   return (
     <div className="flex h-full flex-col text-ink">
       <div className="flex items-center gap-2.5 border-b border-line px-4 pb-2.5 pt-3">
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] text-[10px] font-bold text-white">AR</span>
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] text-[10px] font-medium text-white">AR</span>
         <div className="flex-1">
           <p className="text-[13px] font-semibold">Ananya R.</p>
           <p className="text-[10px] text-live">● Online · {CURRENCY}8/min chat</p>
@@ -260,12 +259,12 @@ function PayScene() {
       <motion.span
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", duration: 0.6, bounce: 0.4 }}
+        transition={{ type: "spring", duration: 0.6, bounce: 0 }}
         className="grid h-16 w-16 place-items-center rounded-full bg-lime"
       >
         <Check className="h-8 w-8 text-ink" strokeWidth={3} />
       </motion.span>
-      <h4 className="mt-4 font-display text-[22px] font-bold leading-tight tracking-tight">Session complete</h4>
+      <h4 className="mt-4 font-display text-[22px] font-medium leading-tight tracking-tight">Session complete</h4>
       <p className="mt-1 text-[12px] text-muted">with Ananya R.</p>
       <div className="mt-6 w-full rounded-2xl border border-line bg-white p-4 text-left text-[13px]">
         {[
@@ -291,7 +290,7 @@ function PayScene() {
           className="flex items-baseline justify-between"
         >
           <span className="font-semibold">You paid</span>
-          <span className="font-display text-2xl font-bold">
+          <span className="font-display text-2xl font-medium">
             {CURRENCY}
             {mins * EXAMPLE_RATES.video}
           </span>
@@ -323,9 +322,23 @@ export function PhoneDemo({ onStep }: { onStep?: (i: number) => void }) {
   const darkScreen = scene.key === "call";
 
   return (
-    <div ref={ref} className="relative mx-auto w-[272px] sm:w-[300px]">
-      <div className="relative rounded-[48px] bg-[#0b0712] p-[9px] shadow-[0_60px_120px_-40px_rgba(62,42,158,0.75),inset_0_0_0_1.5px_rgba(255,255,255,0.12)]">
-        <div className={`relative h-[560px] overflow-hidden rounded-[40px] sm:h-[580px] ${darkScreen ? "bg-night text-white" : "bg-paper text-ink"} transition-colors duration-300`}>
+    <div ref={ref} className="relative mx-auto w-[min(272px,calc(100vw-48px))] sm:w-[300px]">
+      {/* side buttons (silver) */}
+      <span aria-hidden className="absolute -left-[3px] top-[104px] h-7 w-[4px] rounded-l-sm" style={{ background: "linear-gradient(90deg,#5f636b,#a9adb4 45%,#6b6f77)" }} />
+      <span aria-hidden className="absolute -left-[3px] top-[150px] h-12 w-[4px] rounded-l-sm" style={{ background: "linear-gradient(90deg,#5f636b,#a9adb4 45%,#6b6f77)" }} />
+      <span aria-hidden className="absolute -left-[3px] top-[210px] h-12 w-[4px] rounded-l-sm" style={{ background: "linear-gradient(90deg,#5f636b,#a9adb4 45%,#6b6f77)" }} />
+      <span aria-hidden className="absolute -right-[3px] top-[170px] h-20 w-[4px] rounded-r-sm" style={{ background: "linear-gradient(90deg,#5f636b,#a9adb4 45%,#6b6f77)" }} />
+
+      {/* silver titanium rim */}
+      <div
+        className="relative rounded-[54px] p-[3px] shadow-[0_60px_120px_-40px_rgba(62,42,158,0.75),0_0_0_1px_rgba(0,0,0,0.35),inset_0_0_0_1px_rgba(255,255,255,0.25)]"
+        style={{ background: "linear-gradient(135deg,#b9bcc3 0%,#8f939b 18%,#62666e 34%,#a4a8af 52%,#74787f 68%,#aeb1b7 84%,#666a72 100%)" }}
+      >
+      {/* black glass bezel is the border, so the screen's corners always follow the frame (51 - 8 = 43) */}
+      <div
+        className={`relative h-[578px] overflow-hidden rounded-[51px] border-[8px] border-black [transform:translateZ(0)] sm:h-[598px] ${darkScreen ? "bg-night text-white" : "bg-paper text-ink"} transition-colors duration-300`}
+        style={{ WebkitMaskImage: "-webkit-radial-gradient(white, black)" }}
+      >
           {/* status bar + island */}
           <div className={`relative z-20 flex items-center justify-between px-6 pt-3 text-[11px] font-semibold ${darkScreen ? "text-white" : "text-ink"}`}>
             <span>9:41</span>
@@ -365,7 +378,7 @@ export function PhoneDemo({ onStep }: { onStep?: (i: number) => void }) {
               </motion.div>
             </AnimatePresence>
           </div>
-        </div>
+      </div>
       </div>
     </div>
   );

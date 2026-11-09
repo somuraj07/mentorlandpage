@@ -1,28 +1,56 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Search, Video, MessageCircle, ShieldCheck, Timer, Wallet, Sparkle } from "lucide-react";
+import {
+  AnimatePresence, motion, useAnimationFrame, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity,
+  type MotionValue,
+} from "motion/react";
+import { Search, Video, MessageCircle, ShieldCheck, Timer, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CURRENCY, EXAMPLE_RATES } from "@/lib/site";
 import { CallMock } from "./CallMock";
-import { EASE_OUT, FadeUp, RevealText, Tag } from "./ui";
+import { Meeting } from "./Meeting";
+import { EASE_OUT, FadeUp, RevealText, Stagger, StaggerItem, Tag } from "./ui";
 
 /* ───────────── Crossing bands ───────────── */
 
 const TOPICS_A = ["Career switch", "Interview prep", "UPSC strategy", "Startup pitch", "Salary talks", "Study abroad", "First job", "Freelancing"];
 const TOPICS_B = ["Exam anxiety", "Coding doubts", "Personal finance", "Burnout", "Side business", "Public speaking", "College choice", "Portfolio review"];
 
-function Band({ items, className, reverse }: { items: string[]; className: string; reverse?: boolean }) {
+const wrap = (min: number, max: number, v: number) => {
+  const r = max - min;
+  return ((((v - min) % r) + r) % r) + min;
+};
+
+/** Sticker band that drifts on its own and speeds up with the scroll (Framer Motion). */
+function Band({ items, className, speed = 3 }: { items: string[]; className: string; speed?: number }) {
+  const reduce = useReducedMotion();
+  const baseX = useMotionValue(0);
+  const { scrollY } = useScroll();
+  const velocity = useVelocity(scrollY);
+  const smooth = useSpring(velocity, { damping: 50, stiffness: 400 });
+  const boost = useTransform(smooth, [0, 1000], [0, 4], { clamp: false });
+  const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
+  const dir = useRef(1);
+
+  useAnimationFrame((_, delta) => {
+    if (reduce) return;
+    const b = boost.get();
+    if (b < 0) dir.current = -1;
+    else if (b > 0) dir.current = 1;
+    const move = dir.current * speed * (delta / 1000) * (1 + Math.abs(b));
+    baseX.set(baseX.get() - move);
+  });
+
   return (
     <div className={`flex overflow-hidden py-4 sm:py-5 ${className}`}>
-      <div className={`marquee-track flex shrink-0 items-center ${reverse ? "reverse" : ""}`}>
+      <motion.div className="flex shrink-0 items-center will-change-transform" style={{ x }}>
         {[...items, ...items].map((t, i) => (
           <span key={i} className="flex items-center whitespace-nowrap font-display text-2xl font-semibold tracking-tight sm:text-4xl">
             <span className="px-5 sm:px-8">{t}</span>
-            <Sparkle className="h-5 w-5 shrink-0 fill-current sm:h-6 sm:w-6" />
+            <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-current opacity-60" />
           </span>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -31,8 +59,8 @@ export function Bands() {
   return (
     <section aria-label="Problems people bring" className="relative overflow-hidden bg-paper py-16 sm:py-24">
       <div className="relative -mx-8">
-        <Band items={TOPICS_A} className="-rotate-[4deg] bg-violet text-white shadow-[0_20px_50px_-20px_rgba(107,78,255,0.6)]" />
-        <Band items={TOPICS_B} reverse className="relative -mt-3 rotate-[3deg] bg-lime text-ink" />
+        <Band items={TOPICS_A} speed={3} className="-rotate-[4deg] bg-violet text-white shadow-[0_20px_50px_-20px_rgba(107,78,255,0.6)]" />
+        <Band items={TOPICS_B} speed={-2.4} className="relative -mt-3 rotate-[3deg] bg-lime text-ink" />
       </div>
     </section>
   );
@@ -41,19 +69,13 @@ export function Bands() {
 /* ───────────── Product showcase ───────────── */
 
 export function Showcase() {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.88, 1]);
-  const rotateX = useTransform(scrollYProgress, [0, 1], [20, 0]);
-
   return (
     <section className="mx-auto max-w-[1400px] px-4 pb-24 pt-8 sm:px-8 sm:pb-32">
       <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <Tag n="01">The product</Tag>
-          <RevealText className="mt-5 max-w-3xl text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-            A real conversation. A fair meter.
+          <RevealText className="mt-5 max-w-3xl text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+            A real conversation, a fair meter
           </RevealText>
         </div>
         <FadeUp>
@@ -62,11 +84,15 @@ export function Showcase() {
           </p>
         </FadeUp>
       </div>
-      <div ref={ref} className="mt-12 [perspective:1400px]">
-        <motion.div style={reduce ? {} : { scale, rotateX, transformOrigin: "50% 0%" }}>
-          <CallMock />
-        </motion.div>
-      </div>
+      <motion.div
+        className="mt-12"
+        initial={{ opacity: 0, y: 60, scale: 0.94 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-10% 0px" }}
+        transition={{ duration: 1, ease: EASE_OUT }}
+      >
+        <CallMock />
+      </motion.div>
     </section>
   );
 }
@@ -122,10 +148,10 @@ function MentorPick() {
             <motion.span
               layoutId="mentor-sel"
               className="absolute inset-0 rounded-2xl bg-white"
-              transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0 }}
             />
           )}
-          <span className={`relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br ${p.c} text-xs font-bold text-ink`}>
+          <span className={`relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br ${p.c} text-xs font-medium text-ink`}>
             {p.i}
           </span>
           <div className={`relative flex-1 text-sm transition-colors duration-300 ${sel === i ? "text-ink" : "text-white"}`}>
@@ -154,7 +180,6 @@ function MeterCard() {
       <div className="flex items-center justify-between text-sm">
         <span className="flex items-center gap-2 font-medium">
           <span className="relative flex h-2 w-2">
-            <span className="pulse-ring absolute inset-0 rounded-full bg-lime" />
             <span className="relative h-2 w-2 rounded-full bg-lime" />
           </span>
           Live with Ananya
@@ -172,7 +197,7 @@ function MeterCard() {
       </div>
       <div className="mt-5 flex items-end justify-between">
         <span className="text-xs text-white/50">You pay</span>
-        <span className="font-display text-4xl font-bold tabular-nums">
+        <span className="font-display text-4xl font-medium tabular-nums">
           {CURRENCY}
           {mins * EXAMPLE_RATES.video}
         </span>
@@ -184,7 +209,7 @@ function MeterCard() {
 const STEPS = [
   {
     n: "01",
-    title: "Say what's going on.",
+    title: "Say what's going on",
     body: "Describe the problem in your own words. We match it to mentors who've handled the same thing.",
     visual: <TypingSearch />,
     theme: "bg-lavender-soft text-ink",
@@ -192,7 +217,7 @@ const STEPS = [
   },
   {
     n: "02",
-    title: "Pick your saathi.",
+    title: "Pick your saathi",
     body: "See each mentor's background and per-minute rate up front. Choose the one who fits.",
     visual: <MentorPick />,
     theme: "bg-violet text-white",
@@ -200,7 +225,7 @@ const STEPS = [
   },
   {
     n: "03",
-    title: "Talk. Pay for minutes.",
+    title: "Talk, then pay for minutes",
     body: "Start a video call or a chat. The meter runs only while you talk — end anytime.",
     visual: <MeterCard />,
     theme: "bg-lime text-ink",
@@ -216,11 +241,11 @@ function StepCard({ s, i, progress }: { s: (typeof STEPS)[number]; i: number; pr
     <div className="sticky" style={{ top: `calc(84px + ${i * 22}px)` }}>
       <motion.article
         style={reduce ? {} : { scale, transformOrigin: "50% 0%" }}
-        className={`grid gap-8 overflow-hidden rounded-[32px] p-6 sm:rounded-[40px] sm:p-10 md:min-h-[460px] md:grid-cols-[1.1fr_1fr] md:items-center md:p-14 ${s.theme}`}
+        className={`grid gap-8 overflow-hidden rounded-3xl p-6 sm:rounded-3xl sm:p-10 md:min-h-[460px] md:grid-cols-[1.1fr_1fr] md:items-center md:p-14 ${s.theme}`}
       >
         <div className="flex h-full flex-col">
-          <span className="font-display text-[5.5rem] font-bold leading-none tracking-[-0.06em] opacity-90 sm:text-[8rem]">{s.n}</span>
-          <h3 className="mt-6 text-[2rem] font-bold leading-[1] tracking-[-0.035em] sm:text-5xl">{s.title}</h3>
+          <span className="font-display text-[5.5rem] font-medium leading-none tracking-[-0.03em] opacity-90 sm:text-[8rem]">{s.n}</span>
+          <h3 className="mt-6 text-[2rem] font-medium leading-[1] tracking-[-0.025em] sm:text-5xl">{s.title}</h3>
           <p className={`mt-4 max-w-md text-base sm:text-lg ${s.sub}`}>{s.body}</p>
         </div>
         <div>{s.visual}</div>
@@ -238,8 +263,8 @@ export function HowItWorks() {
       <div className="mb-12 grid gap-6 lg:grid-cols-2 lg:items-end">
         <div>
           <Tag n="02">How it works</Tag>
-          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-            Stuck to sorted, in three moves.
+          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+            Stuck to sorted in three moves
           </RevealText>
         </div>
         <FadeUp>
@@ -261,7 +286,7 @@ export function HowItWorks() {
 /* ───────────── Modes (bento) ───────────── */
 
 const THREAD = [
-  { me: true, t: "Got rejected after the final round again 😞" },
+  { me: true, t: "Got rejected after the final round again" },
   { me: false, t: "That's frustrating. Send me the questions they asked?" },
   { me: true, t: "Sure — sending now" },
   { me: false, t: "Your answers are strong. The gap is how you end. Let's fix that." },
@@ -332,8 +357,8 @@ export function Modes() {
       <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
         <div>
           <Tag n="03">Video or message</Tag>
-          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-0.045em]">
-            Face to face, or at your own pace.
+          <RevealText className="mt-5 text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[0.95] tracking-[-0.03em]">
+            Face to face, or at your own pace
           </RevealText>
         </div>
         <FadeUp>
@@ -346,48 +371,30 @@ export function Modes() {
 
       <div className="mt-12 grid gap-4 md:grid-cols-6">
         <FadeUp className="md:col-span-3">
-          <div data-dark className="relative h-full overflow-hidden rounded-[32px] bg-night p-7 text-white sm:p-10">
+          <div data-dark className="relative h-full overflow-hidden rounded-3xl bg-night p-7 text-white sm:p-10">
             <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(107,78,255,0.7),transparent)]" />
             <div className="relative">
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-violet">
                 <Video className="h-5 w-5" />
               </span>
-              <h3 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">Video calls</h3>
+              <h3 className="mt-6 text-3xl font-medium tracking-tight sm:text-4xl">Video calls</h3>
               <p className="mt-2 max-w-sm text-white/60">
                 One-on-one HD calls with screen share, for mock interviews, code reviews and talks that need
                 a face.
               </p>
             </div>
-            <div className="relative mt-8 flex h-[200px] items-center justify-center">
-              {[0, 1, 2].map((i) => (
-                <span key={i} className="pulse-ring absolute h-28 w-28 rounded-full border border-lavender/60" style={{ animationDelay: `${i * 0.7}s` }} />
-              ))}
-              <motion.span
-                whileHover={{ scale: 1.08 }}
-                className="relative grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] font-display text-2xl font-bold"
-              >
-                VK
-              </motion.span>
-              <div className="absolute bottom-0 flex h-8 items-end gap-[3px]">
-                {Array.from({ length: 28 }).map((_, i) => (
-                  <motion.span
-                    key={i}
-                    className="w-[3px] rounded-full bg-lavender/70"
-                    animate={{ height: [4, 6 + ((i * 53) % 24), 4] }}
-                    transition={{ duration: 1 + (i % 4) * 0.15, repeat: Infinity, ease: "easeInOut", delay: i * 0.03 }}
-                  />
-                ))}
-              </div>
+            <div className="relative mt-8">
+              <Meeting />
             </div>
           </div>
         </FadeUp>
 
         <FadeUp className="md:col-span-3" delay={0.08}>
-          <div className="h-full rounded-[32px] bg-lavender-soft p-7 sm:p-10">
+          <div className="h-full rounded-3xl bg-lavender-soft p-7 sm:p-10">
             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-ink text-white">
               <MessageCircle className="h-5 w-5" />
             </span>
-            <h3 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">Messages</h3>
+            <h3 className="mt-6 text-3xl font-medium tracking-tight sm:text-4xl">Messages</h3>
             <p className="mt-2 max-w-sm text-muted">
               Write when it suits you, attach files, and get replies you can come back to. Billed by session
               length.
@@ -398,24 +405,25 @@ export function Modes() {
           </div>
         </FadeUp>
 
-        <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 md:col-span-6 md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0">
+        <Stagger className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 md:col-span-6 md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0">
           {[
             { icon: Timer, title: "Per-minute billing", body: "The meter runs only while the session is live." },
             { icon: Wallet, title: "No subscription", body: "Top up a wallet and spend it on any mentor." },
             { icon: ShieldCheck, title: "Private sessions", body: "What you share stays between you and your mentor." },
           ].map((f) => (
-            <div
+            <StaggerItem
               key={f.title}
-              className="group min-w-[78%] snap-start rounded-[28px] border border-line bg-card p-6 transition-transform duration-300 hover:-translate-y-0.5 md:min-w-0"
+              lift
+              className="group min-w-[78%] snap-start rounded-2xl border border-line bg-card p-6 md:min-w-0"
             >
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-lavender-soft text-violet transition-transform duration-300 group-hover:rotate-[-10deg] group-hover:scale-110">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-lavender-soft text-violet transition-transform duration-300">
                 <f.icon className="h-5 w-5" />
               </span>
-              <h3 className="mt-5 text-lg font-bold">{f.title}</h3>
+              <h3 className="mt-5 text-lg font-medium">{f.title}</h3>
               <p className="mt-1 text-sm text-muted">{f.body}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

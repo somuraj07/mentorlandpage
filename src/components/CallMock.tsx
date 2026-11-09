@@ -9,7 +9,7 @@ import { EASE_OUT } from "./ui";
 const CHAT = [
   { me: true, text: "I have 3 years in QA. Can I move into product management?" },
   { me: false, text: "Yes — I made the same switch. Let's map your QA wins to PM skills first." },
-  { me: true, text: "That would help a lot 🙏" },
+  { me: true, text: "That would help a lot" },
   { me: false, text: "Share your resume here, I'll mark what to rewrite." },
 ];
 
@@ -34,7 +34,7 @@ export function CallMock() {
   const cost = ((secs / 60) * EXAMPLE_RATES.video).toFixed(2);
 
   return (
-    <div className="relative overflow-hidden rounded-[28px] border border-black/10 bg-[#120c1f] p-2 text-white shadow-[0_50px_120px_-40px_rgba(62,42,158,0.6)] sm:p-3">
+    <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#120c1f] p-2 text-white shadow-[0_50px_120px_-40px_rgba(62,42,158,0.6)] sm:p-3">
       {/* window bar */}
       <div className="flex items-center justify-between px-3 pb-3 pt-1 sm:px-4">
         <div className="flex items-center gap-1.5">
@@ -45,7 +45,6 @@ export function CallMock() {
         <div className="flex items-center gap-2 text-xs sm:gap-3 sm:text-sm">
           <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1">
             <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute inset-0 rounded-full bg-red-500" />
               <span className="relative h-2 w-2 rounded-full bg-red-500" />
             </span>
             <span className="font-mono tabular-nums">{fmt(secs)}</span>
@@ -68,8 +67,7 @@ export function CallMock() {
           {/* mentor avatar */}
           <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2">
             <div className="relative grid h-24 w-24 place-items-center sm:h-32 sm:w-32">
-              <span className="pulse-ring absolute inset-0 rounded-full bg-lavender/40" />
-              <span className="relative grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] font-display text-3xl font-bold text-white sm:text-4xl">
+              <span className="relative grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-[#c8b8ff] to-[#6b4eff] font-display text-3xl font-medium text-white sm:text-4xl">
                 AR
               </span>
             </div>

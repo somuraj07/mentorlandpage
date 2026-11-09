@@ -1,17 +1,14 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { Clock3, Hand } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntroDone } from "./Intro";
 import { PhoneDemo, SCENES } from "./PhoneDemo";
 import { WaitlistForm } from "./WaitlistForm";
 import { EASE_OUT } from "./ui";
 
-const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
-
-const TOPICS = ["career.", "exams.", "startup.", "money.", "next move."];
+const TOPICS = ["career", "exams", "startup", "money", "next move"];
 
 function RotatingWord({ ready }: { ready: boolean }) {
   const [i, setI] = useState(0);
@@ -40,10 +37,12 @@ function RotatingWord({ ready }: { ready: boolean }) {
 
 export function Hero() {
   const ready = useIntroDone();
-  const reduce = !!useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { margin: "0px 0px -10% 0px" });
   const [step, setStep] = useState(0);
+  const reduce = useReducedMotion();
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const tiltY = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 18 });
+  const tiltX = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), { stiffness: 150, damping: 18 });
 
   const enter = (d: number) => ({
     initial: { opacity: 0, y: 22, filter: "blur(8px)" },
@@ -65,26 +64,24 @@ export function Hero() {
   );
 
   return (
-    <section ref={ref} id="top" className="relative isolate overflow-hidden bg-night text-white" aria-label="SAATHYAKI mentorship">
+    <section id="top" className="relative isolate overflow-hidden bg-night text-white" aria-label="SAATHYAKI mentorship">
       {/* stage */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute right-[-10%] top-[10%] h-[80vmin] w-[80vmin] rounded-full bg-[radial-gradient(closest-side,rgba(107,78,255,0.45),transparent)] max-lg:left-1/2 max-lg:top-[58%] max-lg:-translate-x-1/2" />
-        <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:calc(100%/6)_120px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)] sm:[background-size:calc(100%/12)_120px]" />
       </div>
 
       <div className="relative mx-auto grid min-h-[100svh] max-w-[1400px] items-center gap-14 px-4 pb-20 pt-28 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:pb-10 lg:pt-24">
         {/* ── message ── */}
         <div className="relative z-10">
           <motion.div {...enter(0.05)}>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.05] py-1.5 pl-1.5 pr-4 text-[13px] text-white/80 backdrop-blur">
-              <span className="rounded-full bg-lime px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink">Soon</span>
-              1-on-1 mentorship · Opening 26 Jan 2027
-            </span>
+            <p className="flex items-center gap-2 text-sm text-white/60">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime" />
+              Counselling and problem solving, opening 26 January 2027
+            </p>
           </motion.div>
 
-          <h1 className="mt-6 text-[clamp(2.7rem,min(11vw,9svh),5.4rem)] font-bold leading-[0.98] tracking-[-0.045em]">
-            <span className="sr-only">Talk to a mentor about your career, exams, startup, money or next move.</span>
-            <span aria-hidden>
+          <h1 className="mt-6 text-[clamp(2.7rem,min(11vw,9svh),5.4rem)] font-medium leading-[0.98] tracking-[-0.03em]">
+            <span>
               {line("Talk to a mentor", 0.15)}
               {line("about your", 0.25)}
               <motion.span
@@ -99,8 +96,8 @@ export function Hero() {
           </h1>
 
           <motion.p {...enter(0.55)} className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/70 sm:text-lg">
-            SAATHYAKI is one-on-one mentorship for any problem. Video call or chat with someone who&apos;s
-            been there — and pay only for the minutes you talk.
+            SAATHYAKI is one-on-one counselling and problem solving for whatever&apos;s on your mind. Talk it
+            through on video or chat with a mentor who&apos;s been there, and pay only for the minutes you talk.
           </motion.p>
 
           <motion.div {...enter(0.7)} className="mt-7" id="join-hero">
@@ -133,16 +130,23 @@ export function Hero() {
         {/* ── product in motion ── */}
         <motion.div
           className="relative flex justify-center"
+          onMouseMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            mx.set((e.clientX - r.left) / r.width - 0.5);
+            my.set((e.clientY - r.top) / r.height - 0.5);
+          }}
+          onMouseLeave={() => {
+            mx.set(0);
+            my.set(0);
+          }}
           initial={{ opacity: 0, y: 60, rotate: -4 }}
           animate={ready ? { opacity: 1, y: 0, rotate: 0 } : {}}
           transition={{ duration: 1.2, ease: EASE_OUT, delay: 0.35 }}
         >
-          {/* 3D rings: a quiet halo behind the phone */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 opacity-70 sm:h-[640px] sm:w-[640px]">
-            <Scene3D active={inView} reduce={reduce} />
-          </div>
 
-          <PhoneDemo onStep={setStep} />
+          <motion.div style={reduce ? {} : { rotateX: tiltX, rotateY: tiltY, transformPerspective: 1000 }}>
+            <PhoneDemo onStep={setStep} />
+          </motion.div>
 
           {/* annotations (desktop) */}
           <motion.div

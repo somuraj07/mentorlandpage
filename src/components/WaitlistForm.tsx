@@ -43,7 +43,7 @@ export function WaitlistForm({ dark = false, showRole = true }: { dark?: boolean
         <div
           role="radiogroup"
           aria-label="I want to"
-          className={`mb-3 inline-flex rounded-full p-1 text-sm ${
+          className={`mb-3 inline-flex rounded-xl p-1 text-sm ${
             dark ? "border border-white/10 bg-white/[0.06]" : "border border-line bg-card"
           }`}
         >
@@ -59,15 +59,15 @@ export function WaitlistForm({ dark = false, showRole = true }: { dark?: boolean
               role="radio"
               aria-checked={role === value}
               onClick={() => setRole(value)}
-              className={`relative min-h-[36px] rounded-full px-4 transition-colors duration-200 ${
+              className={`relative min-h-[36px] rounded-lg px-4 transition-colors duration-200 ${
                 role === value ? (dark ? "text-ink" : "text-white") : dark ? "text-white/70" : "text-muted"
               }`}
             >
               {role === value && (
                 <motion.span
                   layoutId={`role-pill-${id}`}
-                  className={`absolute inset-0 rounded-full ${dark ? "bg-lavender" : "bg-ink"}`}
-                  transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
+                  className={`absolute inset-0 rounded-lg ${dark ? "bg-lavender" : "bg-ink"}`}
+                  transition={{ type: "spring", duration: 0.4, bounce: 0 }}
                 />
               )}
               <span className="relative">{label}</span>
@@ -110,7 +110,7 @@ export function WaitlistForm({ dark = false, showRole = true }: { dark?: boolean
               Email address
             </label>
             <div
-              className={`flex items-center gap-1.5 rounded-full p-1.5 transition-shadow duration-200 focus-within:ring-2 focus-within:ring-violet/50 ${
+              className={`flex items-center gap-1.5 rounded-2xl p-1.5 transition-shadow duration-200 focus-within:ring-2 focus-within:ring-violet/50 ${
                 dark ? "border border-white/15 bg-white/[0.07] backdrop-blur-md" : "border border-line bg-card shadow-[0_10px_30px_-18px_rgba(40,20,90,0.35)]"
               }`}
             >

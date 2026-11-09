@@ -22,7 +22,7 @@ export function Logo({ light = false }: { light?: boolean }) {
   return (
     <a href="#top" className="flex items-center gap-2.5" aria-label="SAATHYAKI home">
       <LogoMark className="h-6 w-9" light={light} />
-      <span className="font-display text-[17px] font-bold tracking-[0.08em]">SAATHYAKI</span>
+      <span className="font-display text-[17px] font-medium tracking-[0.08em]">SAATHYAKI</span>
     </a>
   );
 }
@@ -55,8 +55,7 @@ export function RevealText({
   const words = children.split(" ");
   return (
     <Tag ref={ref} className={className}>
-      <span className="sr-only">{children}</span>
-      <span aria-hidden>
+      <span>
         {words.map((w, i) => (
           <span key={i} className="inline-block overflow-hidden pb-[0.12em] align-bottom">
             <motion.span
@@ -196,5 +195,81 @@ export function Countdown({ dark = false, size = "sm" }: { dark?: boolean; size?
         </div>
       ))}
     </div>
+  );
+}
+
+/* ───────── Framer Motion helpers ───────── */
+
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+};
+const staggerChild = {
+  hidden: { opacity: 0, y: 24, filter: "blur(6px)" },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: EASE_OUT } },
+};
+
+/** Children marked with StaggerItem cascade in when the group scrolls into view. */
+export function Stagger({
+  children,
+  className = "",
+  as = "div",
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "ul" | "ol";
+}) {
+  const Comp = as === "ul" ? motion.ul : as === "ol" ? motion.ol : motion.div;
+  return (
+    <Comp className={className} variants={staggerParent} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-10% 0px" }}>
+      {children}
+    </Comp>
+  );
+}
+
+export function StaggerItem({
+  children,
+  className = "",
+  as = "div",
+  lift = false,
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "li";
+  lift?: boolean;
+}) {
+  const Comp = as === "li" ? motion.li : motion.div;
+  return (
+    <Comp
+      className={className}
+      variants={staggerChild}
+      whileHover={lift ? { y: -6, transition: { type: "spring", stiffness: 400, damping: 28 } } : undefined}
+      whileTap={lift ? { scale: 0.98 } : undefined}
+    >
+      {children}
+    </Comp>
+  );
+}
+
+/** Button/link that leans toward the cursor and springs back. */
+export function Magnetic({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  return (
+    <motion.div
+      ref={ref}
+      className={className || "inline-flex"}
+      onMouseMove={(e) => {
+        if (reduce || !ref.current) return;
+        const r = ref.current.getBoundingClientRect();
+        setPos({ x: (e.clientX - r.left - r.width / 2) * 0.25, y: (e.clientY - r.top - r.height / 2) * 0.35 });
+      }}
+      onMouseLeave={() => setPos({ x: 0, y: 0 })}
+      animate={pos}
+      transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.4 }}
+    >
+      {children}
+    </motion.div>
   );
 }

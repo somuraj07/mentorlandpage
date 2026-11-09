@@ -13,13 +13,13 @@ const serif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "SAATHYAKI — Find your saathi",
+  title: "SAATHYAKI — Counselling and problem solving with mentors",
   description:
-    "SAATHYAKI connects you with real mentors for any problem — career, studies, money, startups and life. Video call or message, and pay only for the minutes you use. Launching soon.",
+    "SAATHYAKI is one-on-one counselling and problem solving with real mentors. Talk through your career, studies, money, startup or personal problems on video call or chat, and pay only for the minutes you use. Launching soon.",
   openGraph: {
-    title: "SAATHYAKI — Mentorship by the minute",
+    title: "SAATHYAKI — Counselling and problem solving, by the minute",
     description:
-      "Video call or message a mentor for any problem. Pay only for the minutes you use. Join the waitlist.",
+      "Video call or chat with a mentor about any problem. Get counselling and practical solutions, and pay only for the minutes you use. Join the waitlist.",
     type: "website",
   },
 };
@@ -36,7 +36,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full">
         {children}
-        <div className="grain" aria-hidden />
       </body>
     </html>
   );

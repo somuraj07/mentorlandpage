@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { EASE_OUT, Logo } from "./ui";
+import { EASE_OUT, Logo, Magnetic } from "./ui";
 
 const LINKS = [
   ["How it works", "#how"],
@@ -47,7 +47,7 @@ export function Nav() {
         transition={{ duration: 0.35, ease: EASE_OUT }}
       >
         <nav
-          className={`flex w-full max-w-[1400px] items-center justify-between rounded-full border py-1.5 pl-4 pr-1.5 transition-[background-color,border-color,color] duration-300 sm:pl-5 ${
+          className={`flex w-full max-w-[1400px] items-center justify-between rounded-2xl border py-1.5 pl-4 pr-1.5 transition-[background-color,border-color,color] duration-300 sm:pl-5 ${
             dark ? "text-white" : "text-ink"
           } ${
             scrolled
@@ -72,17 +72,19 @@ export function Nav() {
                 {hovered === href && (
                   <motion.span
                     layoutId="nav-hover"
-                    className={`absolute inset-0 rounded-full ${dark ? "bg-white/10" : "bg-lavender-soft"}`}
-                    transition={{ type: "spring", duration: 0.35, bounce: 0.1 }}
+                    className={`absolute inset-0 rounded-lg ${dark ? "bg-white/10" : "bg-lavender-soft"}`}
+                    transition={{ type: "spring", duration: 0.35, bounce: 0 }}
                   />
                 )}
               </li>
             ))}
           </ul>
           <div className="flex items-center gap-2">
-            <a href="#join" className={`btn hidden px-5 text-sm sm:inline-flex ${dark ? "btn-lime" : "btn-dark"}`}>
-              Join the waitlist
-            </a>
+            <Magnetic className="hidden sm:inline-flex">
+              <a href="#join" className={`btn px-5 text-sm ${dark ? "btn-lime" : "btn-dark"}`}>
+                Join the waitlist
+              </a>
+            </Magnetic>
             <button
               className={`btn relative h-11 w-11 lg:hidden ${dark ? "bg-white/10" : "bg-ink text-white"}`}
               aria-label={open ? "Close menu" : "Open menu"}
@@ -139,7 +141,7 @@ export function Nav() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              a saathi for every problem.
+              a saathi for every problem
             </motion.p>
             <a href="#join" onClick={() => setOpen(false)} className="btn btn-lime mt-auto w-full py-3.5 text-base">
               Join the waitlist <ArrowRight className="h-4 w-4" />
@@ -156,11 +158,11 @@ export function Nav() {
             initial={{ y: 120, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0 }}
           >
             <a
               href="#join"
-              className="flex items-center justify-between rounded-full bg-night py-2 pl-5 pr-2 text-white shadow-[0_20px_40px_-12px_rgba(40,20,90,0.6)]"
+              className="flex items-center justify-between rounded-2xl bg-night py-2 pl-5 pr-2 text-white shadow-[0_20px_40px_-12px_rgba(40,20,90,0.6)]"
             >
               <span className="text-sm">
                 <span className="text-lime">●</span> Early access is open
